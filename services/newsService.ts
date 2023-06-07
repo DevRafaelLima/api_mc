@@ -1,21 +1,18 @@
 import { INewsService } from '../contracts/iNewsService';
 import { Result } from '../infra/result';
 import { NewsRepository } from '../repository/newsRepository';
+import { News } from '../models/news';
 
 export class NewsService implements INewsService {
-    async get(_id: string) {
+    async get(_id: string): Promise<News> {
         let resutl = await NewsRepository.findById(_id);
-        return resutl;
+        return resutl as News;
     }
 
-    async getAll(page: number, qtd: number): Promise<Result> {
-        console.log("checou aqui no service")
+    async getAll(page: number, qtd: number): Promise<Result<News>> {
         let total = await NewsRepository.count({});
-        console.log(total);
         let data = await NewsRepository.find({}).skip((page * qtd) - qtd).limit(qtd);
-        console.log(data);
-        let result = new Result(qtd, page, total, data);
-        console.log(result);
+        let result = new Result<News>(qtd, page, total, data);
         return result;
     }
 }
